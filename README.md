@@ -110,7 +110,7 @@ docker service scale <ROUTER_SERVICE_NAME>=1
 You now have a **fully functional InnoDB Cluster** with:
 
 * One **Primary (Read-Write)** node
-* One or more **Secondary (Read-Only)** nodes
+* two or more **Secondary (Read-Only)** nodes
 * A **Router** managing connections automatically
 
 Check again with:
