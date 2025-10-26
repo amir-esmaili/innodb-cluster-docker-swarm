@@ -1,0 +1,121 @@
+version: '3.8'
+
+services:
+  mysql-server-1:
+    image: mysql/mysql-server:8.0.12
+    hostname: mysql-server-1
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_ROOT_HOST=%
+    command:
+      [
+        "mysqld",
+        "--server_id=1",
+        "--binlog_checksum=NONE",
+        "--gtid_mode=ON",
+        "--enforce_gtid_consistency=ON",
+        "--log_bin",
+        "--log_slave_updates=ON",
+        "--master_info_repository=TABLE",
+        "--relay_log_info_repository=TABLE",
+        "--transaction_write_set_extraction=XXHASH64",
+        "--user=mysql",
+        "--skip-host-cache",
+        "--skip-name-resolve",
+        "--default_authentication_plugin=mysql_native_password",
+      ]
+    deploy:
+      replicas: 1
+    volumes:
+      - mysql-data1:/var/lib/mysql
+    networks:
+      - innodb-cluster-net
+
+  mysql-server-2:
+    image: mysql/mysql-server:8.0.12
+    hostname: mysql-server-2
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_ROOT_HOST=%
+    command:
+      [
+        "mysqld",
+        "--server_id=2",
+        "--binlog_checksum=NONE",
+        "--gtid_mode=ON",
+        "--enforce_gtid_consistency=ON",
+        "--log_bin",
+        "--log_slave_updates=ON",
+        "--master_info_repository=TABLE",
+        "--relay_log_info_repository=TABLE",
+        "--transaction_write_set_extraction=XXHASH64",
+        "--user=mysql",
+        "--skip-host-cache",
+        "--skip-name-resolve",
+        "--default_authentication_plugin=mysql_native_password",
+        "--relay-log=mysql-server-2-relay-bin",
+      ]
+    deploy:
+      replicas: 1
+    volumes:
+      - mysql-data2:/var/lib/mysql
+    networks:
+      - innodb-cluster-net
+
+  mysql-server-3:
+    image: mysql/mysql-server:8.0.12
+    hostname: mysql-server-3
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_ROOT_HOST=%
+    command:
+      [
+        "mysqld",
+        "--server_id=3",
+        "--binlog_checksum=NONE",
+        "--gtid_mode=ON",
+        "--enforce_gtid_consistency=ON",
+        "--log_bin",
+        "--log_slave_updates=ON",
+        "--master_info_repository=TABLE",
+        "--relay_log_info_repository=TABLE",
+        "--transaction_write_set_extraction=XXHASH64",
+        "--user=mysql",
+        "--skip-host-cache",
+        "--skip-name-resolve",
+        "--default_authentication_plugin=mysql_native_password",
+        "--relay-log=mysql-server-3-relay-bin",
+      ]
+    deploy:
+      replicas: 1
+    volumes:
+      - mysql-data3:/var/lib/mysql
+    networks:
+      - innodb-cluster-net
+    
+  mysql-router:
+    image: mysql/mysql-router:8.0
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_HOST=mysql-server-1
+      - MYSQL_PORT=3306
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_INNODB_NUM_MEMBERS=3
+    ports:
+      - "6446:6446"
+    depends_on:
+      - mysql-server-1
+      - mysql-server-2
+      - mysql-server-3
+    deploy:
+      replicas: 0
+    networks:
+      - innodb-cluster-net
+
+volumes:
+  mysql-data1:
+  mysql-data2:
+  mysql-data3:
+
+networks:
+  innodb-cluster-net :
