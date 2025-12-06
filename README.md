@@ -86,9 +86,12 @@ Check the health and status of your cluster:
 var cluster = dba.getCluster()  // For subsequent checks
 cluster.status()
 ```
-
+---
 This displays which node is **Primary (RW)** and which are **Secondary (RO)**.
-
+## 🔍🔍 If your cluster experiences a complete outage you can reconfigure it using dba.rebootClusterFromCompleteOutage(). 
+```js
+var cluster = dba.rebootClusterFromCompleteOutage('cluster-name')
+```
 ---
 
 ## ⚙️ Step 7: Configure the MySQL Router
