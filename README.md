@@ -88,7 +88,7 @@ cluster.status()
 ```
 ---
 This displays which node is **Primary (RW)** and which are **Secondary (RO)**.
-## 🔍🔍 If your cluster experiences a complete outage you can reconfigure it using dba.rebootClusterFromCompleteOutage(). 
+## 🔍🔍 If your cluster experiences a complete outage you can reconfigure . 
 ```js
 var cluster = dba.rebootClusterFromCompleteOutage('cluster-name')
 ```
