@@ -71,7 +71,7 @@ This creates your **InnoDB Cluster**.
 Configure and add other MySQL servers (recommended: at least **three nodes**):
 
 ```js
-dba.addinstance()
+cluster.addinstance()
 ```
 
 Repeat for each additional MySQL server you want in the cluster.
